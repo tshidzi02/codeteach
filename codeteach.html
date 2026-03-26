@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CodeTeach — AI Code Learning Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0b0d10;--surface:#13151a;--surface2:#1a1d24;--surface3:#22262f;--surface4:#2a2f3b;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);--border3:rgba(255,255,255,0.18);
+  --text:#e8eaf0;--muted:#6b7280;--muted2:#9ca3af;
+  --accent:#00e5a0;--accent-dim:rgba(0,229,160,0.1);--accent-glow:rgba(0,229,160,0.25);
+  --blue:#5b8fff;--blue-dim:rgba(91,143,255,0.1);
+  --purple:#a78bfa;--purple-dim:rgba(167,139,250,0.1);
+  --orange:#fb923c;--orange-dim:rgba(251,146,60,0.1);
+  --pink:#f472b6;--pink-dim:rgba(244,114,182,0.1);
+  --yellow:#fbbf24;--yellow-dim:rgba(251,191,36,0.1);
+  --red:#f87171;--red-dim:rgba(248,113,113,0.1);
+  --teal:#2dd4bf;--teal-dim:rgba(45,212,191,0.1);
+  /* syntax colors */
+  --syn-keyword:#c792ea;--syn-function:#82aaff;--syn-string:#c3e88d;
+  --syn-number:#f78c6c;--syn-comment:#546e7a;--syn-operator:#89ddff;
+  --syn-class:#ffcb6b;--syn-variable:#eeffff;--syn-boolean:#ff5874;
+  --syn-property:#b2ccd6;--syn-tag:#f07178;--syn-attribute:#c792ea;
+  --radius:10px;--radius-lg:16px;--radius-xl:22px;
+  --mono:'DM Mono',monospace;--sans:'DM Sans',sans-serif;--display:'Syne',sans-serif;
+}
+/* ── LIGHT MODE OVERRIDES ── */
+body.light{
+  --bg:#f4f5f7;--surface:#ffffff;--surface2:#f0f1f4;--surface3:#e4e6eb;--surface4:#d1d5db;
+  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.12);--border3:rgba(0,0,0,0.2);
+  --text:#111827;--muted:#6b7280;--muted2:#4b5563;
+  --accent:#00a372;--accent-dim:rgba(0,163,114,0.1);--accent-glow:rgba(0,163,114,0.25);
+  --blue:#2563eb;--blue-dim:rgba(37,99,235,0.08);
+  --purple:#7c3aed;--purple-dim:rgba(124,58,237,0.08);
+  --orange:#ea580c;--orange-dim:rgba(234,88,12,0.08);
+  --pink:#db2777;--pink-dim:rgba(219,39,119,0.08);
+  --yellow:#d97706;--yellow-dim:rgba(217,119,6,0.08);
+  --red:#dc2626;--red-dim:rgba(220,38,38,0.08);
+  --teal:#0d9488;--teal-dim:rgba(13,148,136,0.08);
+  --syn-keyword:#7c3aed;--syn-function:#1d4ed8;--syn-string:#166534;
+  --syn-number:#c2410c;--syn-comment:#9ca3af;--syn-operator:#0369a1;
+  --syn-class:#92400e;--syn-variable:#111827;--syn-boolean:#be123c;
+  --syn-property:#0f766e;--syn-tag:#b91c1c;--syn-attribute:#7c3aed;
+}
+
+/* ── THEME TOGGLE BUTTON ── */
+.theme-toggle{width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;flex-shrink:0;}
+.theme-toggle:hover{border-color:var(--accent);transform:rotate(20deg);}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;display:flex;flex-direction:column;transition:background .25s,color .25s;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--surface4);border-radius:3px;}
+
+/* ── NAV ── */
+nav{display:flex;align-items:center;gap:0;padding:0 32px;background:var(--surface);border-bottom:1px solid var(--border);height:52px;flex-shrink:0;z-index:200;}
+.nav-logo{font-family:var(--display);font-size:18px;font-weight:800;letter-spacing:-0.5px;margin-right:28px;color:var(--text);}
+.nav-logo span{color:var(--accent);}
+.nav-tabs{display:flex;gap:2px;height:100%;}
+.nav-tab{display:flex;align-items:center;gap:7px;padding:0 18px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--sans);}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.nav-tab .tab-icon{font-size:14px;}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.api-input-wrap{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:5px 12px;}
+.api-input-wrap label{font-size:11px;color:var(--muted);font-family:var(--mono);white-space:nowrap;}
+#api-key{background:transparent;border:none;color:var(--text);font-family:var(--mono);font-size:12px;width:180px;outline:none;}
+#api-key::placeholder{color:var(--muted);}
+
+/* ── PAGES ── */
+.page{display:none;flex:1;overflow:hidden;flex-direction:column;}
+.page.active{display:flex;}
+
+/* ── BUTTONS ── */
+.btn{font-family:var(--sans);font-size:13px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface2);color:var(--text);padding:7px 14px;cursor:pointer;transition:all .15s;outline:none;white-space:nowrap;}
+.btn:hover{border-color:var(--border3);background:var(--surface3);}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+.btn-accent{background:var(--accent);color:#05120b;font-weight:600;border:none;}
+.btn-accent:hover:not(:disabled){filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 4px 16px var(--accent-glow);}
+.btn-blue{background:var(--blue-dim);color:var(--blue);border-color:rgba(91,143,255,0.2);}
+.btn-blue:hover{background:rgba(91,143,255,0.18);border-color:var(--blue);}
+.btn-sm{padding:5px 11px;font-size:12px;}
+select{font-family:var(--sans);font-size:13px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface2);color:var(--text);padding:7px 10px;cursor:pointer;outline:none;}
+select:focus{border-color:var(--accent);}
+
+/* ── PANEL BASE ── */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;}
+.panel-header{padding:9px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:11px;font-family:var(--mono);color:var(--muted);display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.panel-header .title{color:var(--muted2);font-size:12px;}
+.dots{display:flex;gap:5px;}.dot{width:9px;height:9px;border-radius:50%;}
+.dot-r{background:#ff5f57;}.dot-y{background:#febc2e;}.dot-g{background:#28c840;}
+.pill{margin-left:auto;font-size:10px;background:var(--surface3);border-radius:20px;padding:2px 9px;cursor:pointer;transition:all .15s;border:1px solid transparent;}
+.pill:hover{color:var(--accent);border-color:rgba(0,229,160,.3);}
+
+/* ── SPINNERS / STATUS ── */
+.spinner{display:inline-block;width:11px;height:11px;border:1.5px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.status-bar{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-family:var(--mono);padding:6px 0;flex-shrink:0;}
+
+/* ── SECTION TITLE ── */
+.sec-title{font-family:var(--display);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ────────────────────────────────────────
+   PAGE 1 — FILE TEACHER
+──────────────────────────────────────── */
+#page-file .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;}
+#page-file .toolbar label{font-size:11px;color:var(--muted);font-family:var(--mono);}
+.file-body{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;gap:12px;padding:12px;overflow:hidden;}
+.file-col{display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden;}
+.code-area{flex:1;min-height:0;display:flex;flex-direction:column;}
+#code-input{flex:1;width:100%;background:transparent;border:none;color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.75;padding:14px;resize:none;outline:none;}
+#code-input::placeholder{color:var(--muted);}
+#output-area{flex:1;min-height:0;padding:14px;font-family:var(--mono);font-size:13px;line-height:1.85;overflow:auto;}
+.out-comment{display:block;color:var(--syn-comment);font-style:italic;background:rgba(84,110,122,0.07);padding:0 2px;border-left:2px solid rgba(84,110,122,0.3);margin-left:-2px;}
+.out-blank{display:block;height:.5em;}
+.placeholder-text{color:var(--muted);font-family:var(--sans);font-size:13px;line-height:1.7;}
+
+/* live preview */
+#preview-panel{display:none;}
+#preview-frame{flex:1;border:none;background:#fff;border-radius:0 0 var(--radius-lg) var(--radius-lg);}
+#console-out{flex:1;min-height:60px;max-height:140px;background:var(--surface);border-radius:0 0 var(--radius-lg) var(--radius-lg);font-family:var(--mono);font-size:12px;color:#c3e88d;padding:10px 14px;overflow:auto;}
+.console-line{display:block;line-height:1.6;}
+.console-line.error{color:var(--red);}
+
+/* syntax legend */
+#legend-bar{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:10px 16px;display:none;flex-wrap:wrap;gap:10px 20px;flex-shrink:0;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11.5px;font-family:var(--mono);}
+.legend-swatch{width:11px;height:11px;border-radius:3px;}
+
+/* steps */
+#steps-section{display:none;}
+.steps-list{display:flex;flex-direction:column;gap:0;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);}
+.step-item{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.step-item:last-child{border-bottom:none;}
+.step-item:hover{background:var(--surface2);}
+.step-item.active{background:var(--accent-dim);}
+.step-num{min-width:24px;height:24px;border-radius:50%;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--mono);color:var(--muted);flex-shrink:0;margin-top:1px;}
+.step-item.active .step-num{background:var(--accent);color:#05120b;}
+.step-body{flex:1;}.step-title{font-size:13.5px;font-weight:500;margin-bottom:2px;}
+.step-desc{font-size:12.5px;color:var(--muted2);line-height:1.55;}
+.step-item.active .step-desc{color:var(--text);}
+.step-speak{font-size:10px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--muted);padding:3px 8px;margin-top:5px;cursor:pointer;font-family:var(--mono);transition:all .15s;}
+.step-speak:hover{color:var(--blue);border-color:var(--blue);}
+.step-speak.speaking{color:var(--accent);border-color:var(--accent);}
+
+/* flow svg */
+#flow-section{display:none;}
+#flow-svg-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;overflow-x:auto;}
+
+/* voice panel */
+#voice-panel{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;display:none;flex-shrink:0;}
+.voice-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
+.voice-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+.voice-label{font-size:11px;color:var(--muted);font-family:var(--mono);white-space:nowrap;}
+.speed-wrap{display:flex;align-items:center;gap:6px;}
+.speed-wrap input[type=range]{width:90px;accent-color:var(--accent);}
+.speed-val{font-size:12px;font-family:var(--mono);color:var(--accent);min-width:32px;}
+.mode-btns{display:flex;gap:6px;}
+.mode-btn{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--mono);transition:all .15s;}
+.mode-btn.active{background:var(--accent-dim);color:var(--accent);border-color:rgba(0,229,160,.3);}
+#voice-transcript{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;line-height:1.7;color:var(--text);min-height:46px;}
+.speaking-indicator{display:none;align-items:center;gap:6px;font-size:11px;color:var(--accent);font-family:var(--mono);margin-bottom:6px;}
+.speaking-indicator.show{display:flex;}
+.pulse-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;animation:pulse 1s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.65);}}
+
+/* ────────────────────────────────────────
+   PAGE 2 — PROJECT TEACHER
+──────────────────────────────────────── */
+#page-project .proj-body{flex:1;display:grid;grid-template-columns:280px 1fr;gap:0;overflow:hidden;}
+#page-project .proj-sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.sidebar-header{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sidebar-header h3{font-family:var(--display);font-size:14px;font-weight:700;margin-bottom:10px;}
+.add-file-tabs{display:flex;gap:2px;margin-bottom:10px;}
+.add-tab{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--mono);transition:all .15s;}
+.add-tab.active{background:var(--blue-dim);color:var(--blue);border-color:rgba(91,143,255,.3);}
+.add-inputs{display:flex;flex-direction:column;gap:6px;}
+.add-inputs input,.add-inputs textarea{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:var(--mono);font-size:12px;padding:7px 10px;outline:none;width:100%;}
+.add-inputs input:focus,.add-inputs textarea:focus{border-color:var(--accent);}
+.add-inputs textarea{resize:vertical;min-height:80px;max-height:160px;}
+.file-list{flex:1;overflow-y:auto;padding:8px;}
+.file-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius);cursor:pointer;transition:background .15s;margin-bottom:2px;}
+.file-item:hover{background:var(--surface2);}
+.file-item.active{background:var(--blue-dim);border:1px solid rgba(91,143,255,.2);}
+.file-icon{font-size:13px;width:18px;text-align:center;}
+.file-name{font-size:12.5px;font-family:var(--mono);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.file-item.active .file-name{color:var(--blue);}
+.file-del{font-size:11px;color:var(--muted);cursor:pointer;padding:2px 5px;border-radius:4px;}
+.file-del:hover{background:var(--red-dim);color:var(--red);}
+.sidebar-footer{padding:10px 16px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
+.github-input-wrap{display:flex;gap:6px;}
+.github-input-wrap input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:var(--mono);font-size:12px;padding:6px 10px;outline:none;}
+.github-input-wrap input:focus{border-color:var(--accent);}
+.proj-main{display:flex;flex-direction:column;overflow:hidden;}
+.proj-toolbar{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-shrink:0;background:var(--surface);}
+.proj-content{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;overflow:hidden;}
+.proj-code-panel{display:flex;flex-direction:column;overflow:hidden;}
+.proj-explain-panel{display:flex;flex-direction:column;gap:8px;overflow-y:auto;}
+#proj-teach-output{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;font-size:13.5px;line-height:1.8;color:var(--text);min-height:200px;white-space:pre-wrap;}
+.file-relation-diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;overflow-x:auto;}
+#proj-voice-panel{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;display:none;}
+
+/* ────────────────────────────────────────
+   PAGE 3 — COMPARE
+──────────────────────────────────────── */
+#page-compare .compare-body{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:12px;gap:10px;}
+.compare-top{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex-shrink:0;}
+.compare-input-panel{display:flex;flex-direction:column;}
+.compare-code-input{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:12.5px;line-height:1.7;padding:12px;border-radius:0 0 var(--radius-lg) var(--radius-lg);resize:none;outline:none;min-height:180px;max-height:260px;}
+.compare-code-input:focus{border-color:rgba(91,143,255,.3);}
+.compare-results{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:10px;overflow:hidden;}
+.diff-panel{display:flex;flex-direction:column;overflow:hidden;}
+.diff-area{flex:1;overflow:auto;font-family:var(--mono);font-size:12.5px;line-height:1.75;padding:12px;}
+.diff-line{display:flex;gap:8px;padding:1px 4px;border-radius:3px;}
+.diff-line.added{background:rgba(0,229,160,0.09);color:var(--accent);}
+.diff-line.removed{background:rgba(248,113,113,0.09);color:var(--red);}
+.diff-line.changed{background:rgba(251,191,36,0.08);color:var(--yellow);}
+.diff-line.same{color:var(--muted2);}
+.diff-marker{width:14px;flex-shrink:0;font-size:11px;}
+.diff-text{flex:1;white-space:pre-wrap;word-break:break-all;}
+.compare-ai-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;overflow:auto;display:none;}
+#compare-explain{font-size:13.5px;line-height:1.8;color:var(--text);white-space:pre-wrap;}
+.compare-voice{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px;display:none;}
+
+/* ── ANIMATIONS ── */
+.fade-in{animation:fadeIn .35s ease forwards;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── TOOLTIP ── */
+.tooltip{position:relative;}
+.tooltip:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--surface4);color:var(--text);font-size:11px;white-space:nowrap;padding:4px 8px;border-radius:6px;pointer-events:none;border:1px solid var(--border2);}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <span class="nav-logo">Code<span>Teach</span></span>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('file')" id="tab-file">
+      <span class="tab-icon">📄</span> File Teacher
+    </button>
+    <button class="nav-tab" onclick="showPage('project')" id="tab-project">
+      <span class="tab-icon">📁</span> Project Teacher
+    </button>
+    <button class="nav-tab" onclick="showPage('compare')" id="tab-compare">
+      <span class="tab-icon">⚖️</span> Compare Code
+    </button>
+    <button class="nav-tab" onclick="showPage('analyze')" id="tab-analyze">
+      <span class="tab-icon">🔍</span> Code Analyzer
+    </button>
+  </div>
+  <div class="nav-right">
+    <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle light / dark mode">🌙</button>
+    <div class="api-input-wrap">
+      <label>API KEY</label>
+      <input type="password" id="api-key" placeholder="sk-ant-..." />
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     PAGE 1 — FILE TEACHER
+══════════════════════════════════════ -->
+<div class="page active" id="page-file">
+  <div id="page-file" style="display:contents;">
+
+  <div class="toolbar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;">
+    <label style="font-size:11px;color:var(--muted);font-family:var(--mono);">Lang</label>
+    <select id="lang-sel">
+      <option>JavaScript</option><option>Python</option><option>HTML/CSS</option>
+      <option>React JSX</option><option>TypeScript</option><option>SQL</option>
+      <option>Bash</option><option>Java</option><option>C / C++</option>
+    </select>
+    <label style="font-size:11px;color:var(--muted);font-family:var(--mono);">Detail</label>
+    <select id="detail-sel">
+      <option value="beginner">Beginner — every line</option>
+      <option value="intermediate">Intermediate — key lines</option>
+      <option value="concise">Concise — one-liners</option>
+    </select>
+    <label style="font-size:11px;color:var(--muted);font-family:var(--mono);">Preview</label>
+    <select id="preview-sel" onchange="togglePreview()">
+      <option value="none">None</option>
+      <option value="html">Live HTML</option>
+      <option value="js">JS Console</option>
+    </select>
+    <button class="btn btn-accent" id="file-run-btn" onclick="fileTeach()">▶ Teach This Code</button>
+    <button class="btn btn-sm" onclick="loadFileExample()">Load example</button>
+    <button class="btn btn-sm" onclick="clearFile()">Clear</button>
+    <div class="status-bar" style="margin-left:auto;margin-bottom:0;">
+      <div class="spinner" id="file-spinner" style="display:none;"></div>
+      <span id="file-status">Ready</span>
+    </div>
+  </div>
+
+  <!-- colour legend -->
+  <div id="legend-bar" style="margin:8px 16px 0;display:none;">
+    <span class="sec-title" style="margin:0;font-size:10px;flex-shrink:0;">COLOUR KEY</span>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--syn-keyword);"></div><span style="color:var(--syn-keyword);">keyword</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--syn-function);"></div><span style="color:var(--syn-function);">function</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--syn-string);"></div><span style="color:var(--syn-string);">string</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--syn-number);"></div><span style="color:var(--syn-number);">number</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--syn-class);"></div><span style="color:var(--syn-class);">class / type</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--syn-operator);"></div><span style="color:var(--syn-operator);">operator</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--syn-boolean);"></div><span style="color:var(--syn-boolean);">boolean / null</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--syn-comment);"></div><span style="color:var(--syn-comment);font-style:italic;">comment</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--syn-property);"></div><span style="color:var(--syn-property);">property</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--syn-tag);"></div><span style="color:var(--syn-tag);">tag / bracket</span></div>
+  </div>
+
+  <!-- 3-COLUMN BODY -->
+  <div style="flex:1;display:grid;grid-template-columns:1fr 1fr 340px;gap:10px;padding:10px 16px 12px;overflow:hidden;min-height:0;">
+
+    <!-- COL 1: Your code + live preview -->
+    <div style="display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden;">
+      <div class="panel" style="flex:1;min-height:0;">
+        <div class="panel-header">
+          <div class="dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+          <span class="title">your-code</span>
+          <span class="pill" onclick="loadFileExample()">example</span>
+        </div>
+        <textarea id="code-input" placeholder="// Paste your code here...
+// Try any language — JavaScript, Python, HTML, React, SQL...
+// Then click ▶ Teach This Code" oninput="livePreview()" style="flex:1;width:100%;background:transparent;border:none;color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.75;padding:14px;resize:none;outline:none;"></textarea>
+      </div>
+      <!-- preview panel -->
+      <div class="panel" id="preview-panel" style="height:190px;display:none;flex-shrink:0;">
+        <div class="panel-header">
+          <div class="dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+          <span class="title" id="preview-title">Live Preview</span>
+        </div>
+        <iframe id="preview-frame" style="flex:1;border:none;background:#fff;border-radius:0 0 var(--radius-lg) var(--radius-lg);"></iframe>
+        <div id="console-out" style="display:none;flex:1;background:var(--bg);font-family:var(--mono);font-size:12px;color:#c3e88d;padding:10px 14px;overflow:auto;border-radius:0 0 var(--radius-lg) var(--radius-lg);"></div>
+      </div>
+    </div>
+
+    <!-- COL 2: Commented + highlighted output -->
+    <div style="display:flex;flex-direction:column;min-height:0;overflow:hidden;">
+      <div class="panel" style="flex:1;min-height:0;">
+        <div class="panel-header">
+          <div class="dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+          <span class="title">commented + highlighted</span>
+          <span class="pill" id="copy-pill" onclick="copyOutput()">copy</span>
+        </div>
+        <div id="output-area" style="flex:1;min-height:0;padding:14px;font-family:var(--mono);font-size:13px;line-height:1.85;overflow:auto;">
+          <span class="placeholder-text">Your beautifully commented &amp; colour-coded code appears here.<br><br>Every colour means something — see the legend above once you run it.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COL 3: Voice + Steps + Flow -->
+    <div style="display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden;">
+
+      <!-- Voice panel (always visible placeholder, populated after run) -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;flex-shrink:0;">
+        <div class="sec-title" style="margin-bottom:10px;">🔊 Voice</div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span class="voice-label">VOICE</span>
+            <select id="voice-sel" style="font-size:12px;padding:4px 8px;flex:1;min-width:0;"></select>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span class="voice-label">MODE</span>
+            <div class="mode-btns">
+              <button class="mode-btn active" id="mode-comments" onclick="setVoiceMode('comments')">Comments</button>
+              <button class="mode-btn" id="mode-teach" onclick="setVoiceMode('teach')">Teach me</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="voice-label">SPEED</span>
+            <input type="range" id="voice-speed" min="0.01" max="3" step="0.01" value="0.9" oninput="updateSpeed()" style="flex:1;accent-color:var(--accent);"/>
+            <span class="speed-val" id="speed-display" style="font-size:12px;font-family:var(--mono);color:var(--accent);min-width:36px;">0.90×</span>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-sm btn-accent" id="play-btn" onclick="startVoice()" style="flex:1;">▶ Play</button>
+            <button class="btn btn-sm" id="pause-btn" onclick="togglePause()" style="display:none;flex:1;">⏸ Pause</button>
+            <button class="btn btn-sm" onclick="stopVoice()">■</button>
+          </div>
+          <div class="speaking-indicator" id="speak-indicator">
+            <div class="pulse-dot"></div>
+            <span id="speak-label" style="font-size:11px;font-family:var(--mono);color:var(--accent);">Speaking...</span>
+          </div>
+          <div id="voice-transcript" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-size:12.5px;line-height:1.65;color:var(--text);min-height:44px;">Run the analysis to enable voice.</div>
+        </div>
+      </div>
+
+      <!-- Steps + Flow scrollable below voice -->
+      <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;min-height:0;" id="bottom-sections">
+        <div id="steps-section" style="display:none;">
+          <div class="sec-title">Steps</div>
+          <div class="steps-list" id="steps-list"></div>
+        </div>
+        <div id="flow-section" style="display:none;">
+          <div class="sec-title">Flow diagram</div>
+          <div id="flow-svg-wrap" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;overflow-x:auto;">
+            <svg id="flow-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end col 3 -->
+  </div><!-- end 3-col grid -->
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 2 — PROJECT TEACHER
+══════════════════════════════════════ -->
+<div class="page" id="page-project">
+  <div class="proj-body" style="flex:1;display:grid;grid-template-columns:290px 1fr;overflow:hidden;">
+
+    <!-- SIDEBAR -->
+    <div class="proj-sidebar">
+      <div class="sidebar-header">
+        <h3>Project Files</h3>
+        <div class="add-file-tabs">
+          <button class="add-tab active" onclick="setAddTab('paste')" id="atab-paste">Paste</button>
+          <button class="add-tab" onclick="setAddTab('upload')" id="atab-upload">Upload</button>
+          <button class="add-tab" onclick="setAddTab('github')" id="atab-github">GitHub</button>
+        </div>
+        <div class="add-inputs" id="add-paste-ui">
+          <input type="text" id="paste-filename" placeholder="filename.js" />
+          <textarea id="paste-code" placeholder="Paste file contents here..."></textarea>
+          <button class="btn btn-sm btn-blue" onclick="addFileFromPaste()">+ Add File</button>
+        </div>
+        <div class="add-inputs" id="add-upload-ui" style="display:none;">
+          <input type="file" id="upload-input" multiple accept=".js,.jsx,.ts,.tsx,.py,.html,.css,.json,.md,.txt,.sql,.sh" onchange="handleUpload(event)" style="font-size:12px;color:var(--muted);background:transparent;border:none;padding:4px 0;"/>
+        </div>
+        <div class="add-inputs" id="add-github-ui" style="display:none;">
+          <div class="github-input-wrap">
+            <input type="text" id="github-url" placeholder="https://github.com/user/repo" />
+            <button class="btn btn-sm" onclick="loadGitHub()">Load</button>
+          </div>
+          <span style="font-size:11px;color:var(--muted);">Loads top-level files from a public repo</span>
+        </div>
+      </div>
+      <div class="file-list" id="proj-file-list">
+        <span style="font-size:12px;color:var(--muted);padding:8px;">No files yet — add some above</span>
+      </div>
+      <div class="sidebar-footer">
+        <button class="btn btn-accent btn-sm" onclick="teachProject()">▶ Teach Whole Project</button>
+        <button class="btn btn-sm" onclick="clearProject()">Clear all files</button>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="proj-main">
+      <div class="proj-toolbar">
+        <select id="proj-detail" style="font-size:12px;padding:5px 9px;">
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="concise">Concise</option>
+        </select>
+        <button class="btn btn-sm" id="proj-teach-file-btn" onclick="teachCurrentFile()" disabled>▶ Teach This File</button>
+        <div class="status-bar" style="margin-bottom:0;margin-left:auto;">
+          <div class="spinner" id="proj-spinner" style="display:none;"></div>
+          <span id="proj-status">Select a file or teach the whole project</span>
+        </div>
+      </div>
+
+      <div class="proj-content">
+        <!-- code -->
+        <div class="proj-code-panel">
+          <div class="panel" style="flex:1;min-height:0;">
+            <div class="panel-header">
+              <div class="dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+              <span class="title" id="proj-file-title">No file selected</span>
+              <span class="pill" id="proj-copy-pill" onclick="copyProjOutput()" style="display:none">copy</span>
+            </div>
+            <div id="proj-output-area" style="flex:1;min-height:0;padding:14px;font-family:var(--mono);font-size:12.5px;line-height:1.85;overflow:auto;">
+              <span class="placeholder-text">Add files on the left, select one, and click Teach This File — or teach the whole project at once.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- explanation + voice -->
+        <div class="proj-explain-panel">
+          <div class="panel" style="flex:1;min-height:0;">
+            <div class="panel-header"><span class="title">Teaching explanation</span></div>
+            <div id="proj-teach-output" style="flex:1;overflow:auto;padding:14px;font-size:13px;line-height:1.8;color:var(--muted2);">
+              Explanation will appear here after teaching...
+            </div>
+          </div>
+
+          <!-- file relation diagram -->
+          <div id="proj-diagram-wrap" style="display:none;">
+            <div class="sec-title">File relationships</div>
+            <div class="file-relation-diagram">
+              <svg id="proj-rel-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="120"></svg>
+            </div>
+          </div>
+
+          <!-- project voice panel -->
+          <div id="proj-voice-panel">
+            <div class="voice-row">
+              <span class="voice-label">VOICE</span>
+              <select id="proj-voice-sel" style="font-size:12px;padding:5px 9px;"></select>
+              <span class="voice-label">SPEED</span>
+              <div class="speed-wrap">
+                <input type="range" id="proj-speed" min="0.01" max="3" step="0.01" value="0.9" oninput="updateProjSpeed()"/>
+                <span class="speed-val" id="proj-speed-display">0.90×</span>
+              </div>
+            </div>
+            <div class="voice-row">
+              <div class="mode-btns">
+                <button class="mode-btn active" id="proj-mode-comments" onclick="setProjVoiceMode('comments')">Read comments</button>
+                <button class="mode-btn" id="proj-mode-teach" onclick="setProjVoiceMode('teach')">Teach project</button>
+              </div>
+              <button class="btn btn-sm" id="proj-play-btn" onclick="startProjVoice()">▶ Play</button>
+              <button class="btn btn-sm" id="proj-pause-btn" style="display:none" onclick="toggleProjPause()">⏸ Pause</button>
+              <button class="btn btn-sm" onclick="stopProjVoice()">■ Stop</button>
+            </div>
+            <div class="speaking-indicator" id="proj-speak-indicator">
+              <div class="pulse-dot"></div><span id="proj-speak-label">Speaking...</span>
+            </div>
+            <div id="proj-transcript" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;line-height:1.7;margin-top:6px;">Ready to play...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 3 — COMPARE CODE
+══════════════════════════════════════ -->
+<div class="page" id="page-compare">
+  <div class="compare-body">
+    <!-- top inputs -->
+    <div class="compare-top">
+      <div class="compare-input-panel">
+        <div class="panel-header" style="background:var(--surface2);border:1px solid var(--border);border-bottom:none;border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
+          <div class="dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+          <span class="title">File A (original)</span>
+        </div>
+        <textarea class="compare-code-input" id="compare-a" placeholder="// Paste the original / older version here..."></textarea>
+      </div>
+      <div class="compare-input-panel">
+        <div class="panel-header" style="background:var(--surface2);border:1px solid var(--border);border-bottom:none;border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
+          <div class="dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+          <span class="title">File B (new version)</span>
+        </div>
+        <textarea class="compare-code-input" id="compare-b" placeholder="// Paste the new / updated version here..."></textarea>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
+      <select id="compare-lang">
+        <option>JavaScript</option><option>Python</option><option>HTML/CSS</option>
+        <option>React JSX</option><option>TypeScript</option><option>SQL</option><option>Bash</option>
+      </select>
+      <button class="btn btn-accent" onclick="runCompare()">⚖️ Compare &amp; Explain</button>
+      <button class="btn btn-sm" onclick="loadCompareExample()">Load example</button>
+      <div class="status-bar" style="margin:0;margin-left:auto;">
+        <div class="spinner" id="cmp-spinner" style="display:none;"></div>
+        <span id="cmp-status">Paste two versions of the same file, then compare</span>
+      </div>
+    </div>
+
+    <!-- diff results -->
+    <div class="compare-results">
+      <div class="diff-panel panel">
+        <div class="panel-header">
+          <span class="title">Diff — line changes</span>
+          <span style="font-size:10px;margin-left:auto;display:flex;gap:10px;">
+            <span style="color:var(--accent);">■ added</span>
+            <span style="color:var(--red);">■ removed</span>
+            <span style="color:var(--yellow);">■ changed</span>
+          </span>
+        </div>
+        <div class="diff-area" id="diff-area"><span class="placeholder-text">Diff appears here...</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;overflow:hidden;">
+        <div class="panel compare-ai-panel" id="compare-ai-panel" style="flex:1;display:none;">
+          <div class="panel-header"><span class="title">AI explanation of differences</span></div>
+          <div id="compare-explain" style="flex:1;overflow:auto;padding:14px;font-size:13px;line-height:1.8;"></div>
+        </div>
+        <div class="compare-voice" id="compare-voice-panel">
+          <div class="voice-row">
+            <span class="voice-label">VOICE</span>
+            <select id="cmp-voice-sel" style="font-size:12px;padding:5px 9px;"></select>
+            <span class="voice-label">SPEED</span>
+            <div class="speed-wrap">
+              <input type="range" id="cmp-speed" min="0.01" max="3" step="0.01" value="0.9" oninput="updateCmpSpeed()"/>
+              <span class="speed-val" id="cmp-speed-display">0.90×</span>
+            </div>
+            <button class="btn btn-sm" id="cmp-play-btn" onclick="startCmpVoice()">▶ Play</button>
+            <button class="btn btn-sm" id="cmp-pause-btn" style="display:none" onclick="toggleCmpPause()">⏸ Pause</button>
+            <button class="btn btn-sm" onclick="stopCmpVoice()">■ Stop</button>
+          </div>
+          <div class="speaking-indicator" id="cmp-indicator"><div class="pulse-dot"></div><span id="cmp-speak-label">Speaking...</span></div>
+          <div id="cmp-transcript" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;margin-top:6px;">Press Play to hear the comparison explained.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 4 — CODE ANALYZER
+══════════════════════════════════════ -->
+<div class="page" id="page-analyze">
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+
+    <!-- toolbar -->
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;">
+      <span style="font-family:var(--display);font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.05em;">ANALYZE</span>
+      <div class="mode-btns" style="margin-left:4px;">
+        <button class="mode-btn active" id="az-mode-file" onclick="setAzMode('file')">📄 Current File</button>
+        <button class="mode-btn" id="az-mode-project" onclick="setAzMode('project')">📁 Project Files</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-left:8px;">
+        <span style="font-size:11px;color:var(--muted);font-family:var(--mono);">LANG</span>
+        <select id="az-lang" style="font-size:12px;padding:5px 9px;">
+          <option>JavaScript</option><option>Python</option><option>HTML/CSS</option>
+          <option>React JSX</option><option>TypeScript</option><option>SQL</option><option>Bash</option><option>Java</option><option>C / C++</option>
+        </select>
+      </div>
+      <div class="status-bar" style="margin:0;margin-left:auto;">
+        <div class="spinner" id="az-spinner" style="display:none;"></div>
+        <span id="az-status">Ask anything about your code</span>
+      </div>
+    </div>
+
+    <!-- body: left sidebar + main area -->
+    <div style="flex:1;display:grid;grid-template-columns:300px 1fr;overflow:hidden;min-height:0;">
+
+      <!-- LEFT: code input / file list -->
+      <div style="background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;">
+        <div style="padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0;">
+          <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:8px;" id="az-sidebar-label">PASTE FILE TO ANALYZE</div>
+
+          <!-- file mode: paste -->
+          <div id="az-file-ui">
+            <input type="text" id="az-filename" placeholder="filename.js" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:var(--mono);font-size:12px;padding:6px 10px;outline:none;margin-bottom:6px;"/>
+            <textarea id="az-code-input" placeholder="Paste your code here..." style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:var(--mono);font-size:12px;line-height:1.65;padding:8px 10px;outline:none;resize:none;height:200px;"></textarea>
+            <button class="btn btn-sm btn-blue" style="margin-top:6px;width:100%;" onclick="azAddFile()">+ Add File</button>
+          </div>
+
+          <!-- project mode: file list from Project Teacher -->
+          <div id="az-project-ui" style="display:none;">
+            <div style="font-size:12px;color:var(--muted2);line-height:1.6;">Files are pulled from <strong style="color:var(--text);">Project Teacher</strong>. Add your files there first, then come back here to analyze them.</div>
+            <button class="btn btn-sm" style="margin-top:10px;width:100%;" onclick="azSyncProject()">↻ Sync project files</button>
+          </div>
+        </div>
+
+        <!-- file list -->
+        <div style="flex:1;overflow-y:auto;padding:8px;" id="az-file-list">
+          <span style="font-size:12px;color:var(--muted);padding:6px;">No files added yet</span>
+        </div>
+
+        <div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+          <button class="btn btn-sm" onclick="azClearFiles()">Clear all files</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: search + results -->
+      <div style="display:flex;flex-direction:column;overflow:hidden;min-height:0;">
+
+        <!-- search bar -->
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;">
+          <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:8px;">ASK A QUESTION ABOUT YOUR CODE</div>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="az-question" placeholder='e.g. "Where does it make the window bigger?" or "Find all API calls" or "What handles user login?"'
+              style="flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:var(--sans);font-size:13.5px;padding:10px 14px;outline:none;"
+              onkeydown="if(event.key==='Enter') runAnalyze()"
+            />
+            <button class="btn btn-accent" onclick="runAnalyze()" style="padding:10px 20px;">🔍 Analyze</button>
+          </div>
+          <!-- quick questions -->
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;" id="az-quick-btns">
+            <span style="font-size:11px;color:var(--muted);font-family:var(--mono);align-self:center;">QUICK:</span>
+            <button class="btn btn-sm" onclick="azQuick('Where is the main entry point?')">entry point</button>
+            <button class="btn btn-sm" onclick="azQuick('Find all functions and what they do')">all functions</button>
+            <button class="btn btn-sm" onclick="azQuick('Where are API calls or fetch requests made?')">API calls</button>
+            <button class="btn btn-sm" onclick="azQuick('Find any loops and explain what they iterate over')">loops</button>
+            <button class="btn btn-sm" onclick="azQuick('Where is user input handled?')">user input</button>
+            <button class="btn btn-sm" onclick="azQuick('Find any error handling or try/catch blocks')">error handling</button>
+            <button class="btn btn-sm" onclick="azQuick('What variables or state is being tracked?')">state / variables</button>
+            <button class="btn btn-sm" onclick="azQuick('Find styling or layout changes')">styling</button>
+          </div>
+        </div>
+
+        <!-- results area -->
+        <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;" id="az-results">
+          <div style="color:var(--muted);font-size:13.5px;line-height:1.8;padding:24px 0;text-align:center;">
+            <div style="font-size:28px;margin-bottom:12px;">🔍</div>
+            <div style="font-family:var(--display);font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;">Code Analyzer</div>
+            <div>Add a file (or sync your project), then ask any question in plain English.<br>It will find the exact <strong>file → line number</strong> and explain what the code does.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   GLOBAL STATE & UTILS
+═══════════════════════════════════════════════════════ */
+const API = 'https://api.anthropic.com/v1/messages';
+const MODEL = 'claude-sonnet-4-20250514';
+function apiKey(){ return document.getElementById('api-key').value.trim(); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* PAGE NAV */
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.getElementById('tab-'+p).classList.add('active');
+  stopVoice(); stopProjVoice(); stopCmpVoice();
+}
+
+/* VOICES */
+let allVoices = [];
+const PERSONALITIES = [
+  { name:'Friendly Teacher', style:'Speak warmly and encouragingly, like a kind teacher who celebrates every discovery. Use simple words and reassure the learner.' },
+  { name:'Professional Tutor', style:'Speak clearly and precisely, like a university professor. Use correct technical terms but explain them when introduced.' },
+  { name:'Casual Friend', style:'Speak like a chill friend explaining to another friend. Use relaxed everyday language, contractions, and occasional "basically" or "so yeah".' },
+  { name:'Energetic Coach', style:'Speak with enthusiasm and energy! Make learning feel exciting. Use emphasis, exclamation points in tone, and motivating language.' },
+  { name:'Calm Narrator', style:'Speak slowly, clearly, and soothingly like a meditation guide or documentary narrator. Pause between ideas. Never rush.' },
+];
+
+function populateVoiceSelects(){
+  allVoices = window.speechSynthesis.getVoices();
+  ['voice-sel','proj-voice-sel','cmp-voice-sel'].forEach(id=>{
+    const sel = document.getElementById(id); if(!sel) return;
+    sel.innerHTML = '';
+    PERSONALITIES.forEach((p,i)=>{
+      const opt = document.createElement('option');
+      opt.value = i; opt.textContent = p.name;
+      sel.appendChild(opt);
+    });
+  });
+}
+window.speechSynthesis.onvoiceschanged = populateVoiceSelects;
+setTimeout(populateVoiceSelects, 500);
+
+function getBestVoice(){
+  const voices = window.speechSynthesis.getVoices();
+  // prefer natural-sounding English voices
+  const preferred = ['Samantha','Karen','Daniel','Moira','Fiona','Google UK English Female','Google US English','Microsoft Zira','Microsoft David'];
+  for(const name of preferred){
+    const v = voices.find(v=>v.name.includes(name));
+    if(v) return v;
+  }
+  return voices.find(v=>v.lang.startsWith('en')) || voices[0] || null;
+}
+
+/* SEPARATOR CLEANER — skip ====, ----, ####, etc. */
+function cleanForSpeech(text){
+  return text
+    .replace(/[=\-#*_~`|]{3,}/g, '')   // long separator lines
+    .replace(/\/\//g,' ')               // double slashes
+    .replace(/[{}[\]<>]/g,' ')          // brackets
+    .replace(/https?:\/\/\S+/g,'a URL') // URLs
+    .replace(/\s{2,}/g,' ')
+    .trim();
+}
+
+/* SYNTAX HIGHLIGHTING */
+function highlight(code, lang){
+  let c = esc(code);
+  const L = (lang||'').toLowerCase();
+
+  if(L.includes('html') || L.includes('css')){
+    c = c
+      .replace(/(&lt;\/?)([\w-]+)/g,'<span style="color:var(--syn-tag)">$1$2</span>')
+      .replace(/([\w-]+)(=)/g,'<span style="color:var(--syn-attribute)">$1</span>$2')
+      .replace(/(&quot;|&#39;)(.*?)(\1)/g,'<span style="color:var(--syn-string)">$1$2$3</span>')
+      .replace(/(&lt;!--.*?--&gt;)/g,'<span style="color:var(--syn-comment)">$1</span>')
+      .replace(/\b(px|em|rem|vh|vw|%|auto|none|flex|grid|block|inline)\b/g,'<span style="color:var(--syn-number)">$1</span>');
+  } else if(L.includes('python')){
+    c = c
+      .replace(/(#[^\n]*)/g,'<span style="color:var(--syn-comment)">$1</span>')
+      .replace(/\b(def|class|return|import|from|if|elif|else|for|while|in|not|and|or|try|except|finally|with|as|pass|break|continue|lambda|yield|global|nonlocal|del|raise|assert|is|None|True|False)\b/g,'<span style="color:var(--syn-keyword)">$1</span>')
+      .replace(/(["'])((?:\\.|(?!\1)[^\\])*?)(\1)/g,'<span style="color:var(--syn-string)">$1$2$3</span>')
+      .replace(/\b(\d+\.?\d*)\b/g,'<span style="color:var(--syn-number)">$1</span>')
+      .replace(/\b([A-Z][a-zA-Z0-9_]*)\b(?=\s*[\(:])/g,'<span style="color:var(--syn-class)">$1</span>')
+      .replace(/\b([a-z_][a-zA-Z0-9_]*)\b(?=\s*\()/g,'<span style="color:var(--syn-function)">$1</span>');
+  } else if(L.includes('sql')){
+    c = c
+      .replace(/(--[^\n]*)/g,'<span style="color:var(--syn-comment)">$1</span>')
+      .replace(/\b(SELECT|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|ON|GROUP BY|ORDER BY|HAVING|INSERT|UPDATE|DELETE|CREATE|TABLE|INDEX|DROP|ALTER|AS|AND|OR|NOT|IN|BETWEEN|LIKE|IS|NULL|DISTINCT|LIMIT|OFFSET|UNION|ALL|EXISTS|CASE|WHEN|THEN|END)\b/gi,'<span style="color:var(--syn-keyword)">$1</span>')
+      .replace(/(["'])((?:\\.|(?!\1)[^\\])*?)(\1)/g,'<span style="color:var(--syn-string)">$1$2$3</span>')
+      .replace(/\b(\d+\.?\d*)\b/g,'<span style="color:var(--syn-number)">$1</span>');
+  } else {
+    // JS/TS/JSX/Java/C/Bash
+    c = c
+      .replace(/(\/\/[^\n]*)/g,'<span style="color:var(--syn-comment)">$1</span>')
+      .replace(/(\/\*[\s\S]*?\*\/)/g,'<span style="color:var(--syn-comment)">$1</span>')
+      .replace(/\b(const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|new|this|typeof|instanceof|import|export|default|class|extends|super|try|catch|finally|throw|await|async|yield|delete|void|in|of|from|static|get|set|public|private|protected|interface|type|enum|implements|abstract|readonly)\b/g,'<span style="color:var(--syn-keyword)">$1</span>')
+      .replace(/\b(true|false|null|undefined|NaN|Infinity)\b/g,'<span style="color:var(--syn-boolean)">$1</span>')
+      .replace(/(["'`])((?:\\.|(?!\1)[^\\])*?)(\1)/g,'<span style="color:var(--syn-string)">$1$2$3</span>')
+      .replace(/\b(\d+\.?\d*)\b/g,'<span style="color:var(--syn-number)">$1</span>')
+      .replace(/\b([A-Z][a-zA-Z0-9_]*)\b/g,'<span style="color:var(--syn-class)">$1</span>')
+      .replace(/\b([a-z_][a-zA-Z0-9_]*)\b(?=\s*\()/g,'<span style="color:var(--syn-function)">$1</span>')
+      .replace(/(\.\s*)([a-zA-Z_][a-zA-Z0-9_]*)\b(?!\s*\()/g,'$1<span style="color:var(--syn-property)">$2</span>')
+      .replace(/([+\-*/%=!<>&|^~?:]+)/g,'<span style="color:var(--syn-operator)">$1</span>');
+  }
+  return c;
+}
+
+/* RENDER COMMENTED + HIGHLIGHTED OUTPUT */
+function renderHighlightedCommented(raw, lang){
+  const area = document.getElementById('output-area');
+  area.innerHTML = '';
+  fileCommentLines = [];
+  const lines = raw.split('\n');
+  for(const line of lines){
+    const span = document.createElement('span');
+    const t = line.trim();
+    const isComment = t.startsWith('//') || t.startsWith('#') || t.startsWith('--')
+      || t.startsWith('/*') || t.startsWith('*') || t.startsWith('<!--');
+    if(!t){ span.className='out-blank'; }
+    else if(isComment){
+      span.style.cssText='display:block;color:var(--syn-comment);font-style:italic;background:rgba(84,110,122,0.07);border-left:2px solid rgba(84,110,122,0.3);padding:0 6px;';
+      span.innerHTML = esc(line);
+      const cleaned = cleanForSpeech(t.replace(/^[\s//#\-*<!-]+/,'').trim());
+      if(cleaned) fileCommentLines.push(cleaned);
+    } else {
+      span.style.cssText='display:block;';
+      span.innerHTML = highlight(line, lang);
+    }
+    area.appendChild(span);
+  }
+  document.getElementById('legend-bar').style.display='flex';
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE 1 — FILE TEACHER
+═══════════════════════════════════════════════════════ */
+let fileSteps = [];
+let fileCommentLines = [];
+let fileTeachScript = '';
+let voiceMode = 'comments';
+
+function setVoiceMode(m){
+  voiceMode = m;
+  document.getElementById('mode-comments').classList.toggle('active', m==='comments');
+  document.getElementById('mode-teach').classList.toggle('active', m==='teach');
+}
+
+function loadFileExample(){
+  document.getElementById('code-input').value =
+`async function fetchUser(userId) {
+  const baseUrl = "https://api.example.com";
+  const url = \`\${baseUrl}/users/\${userId}\`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+
+    if (!response.ok) {
+      throw new Error(\`HTTP error: \${response.status}\`);
+    }
+
+    const data = await response.json();
+    const user = { id: data.id, name: data.name, email: data.email };
+    console.log("Fetched user:", user.name);
+    return user;
+
+  } catch (err) {
+    console.error("Failed to fetch user:", err.message);
+    return null;
+  }
+}`;
+  document.getElementById('lang-sel').value = 'JavaScript';
+  livePreview();
+}
+
+function clearFile(){
+  document.getElementById('code-input').value='';
+  document.getElementById('output-area').innerHTML='<span class="placeholder-text">Your beautifully commented &amp; colour-coded code appears here.</span>';
+  document.getElementById('legend-bar').style.display='none';
+  document.getElementById('steps-section').style.display='none';
+  document.getElementById('flow-section').style.display='none';
+  document.getElementById('voice-transcript').textContent='Run the analysis to enable voice.';
+  document.getElementById('play-btn').style.display='';
+  document.getElementById('pause-btn').style.display='none';
+  document.getElementById('speak-indicator').classList.remove('show');
+  document.getElementById('preview-panel').style.display='none';
+  stopVoice();
+  setStatus('file','Ready');
+  fileSteps=[]; fileCommentLines=[]; fileTeachScript='';
+}
+
+function setStatus(page, msg, loading=false){
+  const sid = page==='file'?'file-status': page==='proj'?'proj-status':'cmp-status';
+  const spid = page==='file'?'file-spinner': page==='proj'?'proj-spinner':'cmp-spinner';
+  document.getElementById(sid).textContent = msg;
+  document.getElementById(spid).style.display = loading?'inline-block':'none';
+}
+
+function copyOutput(){
+  navigator.clipboard.writeText(document.getElementById('output-area').innerText).then(()=>{
+    const p=document.getElementById('copy-pill'); p.textContent='copied!';
+    setTimeout(()=>p.textContent='copy',1800);
+  });
+}
+
+/* LIVE PREVIEW */
+function togglePreview(){
+  const mode = document.getElementById('preview-sel').value;
+  const panel = document.getElementById('preview-panel');
+  panel.style.display = mode==='none'?'none':'flex';
+  document.getElementById('preview-frame').style.display = mode==='html'?'block':'none';
+  document.getElementById('console-out').style.display = mode==='js'?'block':'none';
+  document.getElementById('preview-title').textContent = mode==='html'?'Live HTML Preview':'JS Console Output';
+  livePreview();
+}
+
+function livePreview(){
+  const mode = document.getElementById('preview-sel').value;
+  const code = document.getElementById('code-input').value;
+  if(mode==='html'){
+    const frame = document.getElementById('preview-frame');
+    const doc = frame.contentDocument || frame.contentWindow.document;
+    doc.open(); doc.write(code); doc.close();
+  } else if(mode==='js'){
+    const out = document.getElementById('console-out');
+    out.innerHTML='';
+    const logs=[], errs=[];
+    try{
+      const fn = new Function('console',code);
+      fn({ log:(...a)=>logs.push(a.join(' ')), error:(...a)=>errs.push(a.join(' ')), warn:(...a)=>logs.push('⚠ '+a.join(' ')) });
+    } catch(e){ errs.push('Error: '+e.message); }
+    [...logs.map(l=>({t:l,e:false})),...errs.map(l=>({t:l,e:true}))].forEach(({t,e})=>{
+      const s=document.createElement('span'); s.className='console-line'+(e?' error':'');
+      s.textContent=(e?'✖ ':'')+t; out.appendChild(s);
+    });
+    if(!logs.length&&!errs.length){ const s=document.createElement('span'); s.className='console-line'; s.style.color='var(--muted)'; s.textContent='(no console output)'; out.appendChild(s); }
+  }
+}
+
+/* MAIN TEACH FUNCTION */
+async function fileTeach(){
+  const code = document.getElementById('code-input').value.trim();
+  const key = apiKey();
+  const lang = document.getElementById('lang-sel').value;
+  const detail = document.getElementById('detail-sel').value;
+  if(!code){ alert('Paste some code first!'); return; }
+  if(!key){ alert('Enter your Anthropic API key in the top bar.'); return; }
+
+  document.getElementById('file-run-btn').disabled=true;
+  stopVoice();
+  setStatus('file','Sending to Claude...',true);
+  fileSteps=[]; fileCommentLines=[]; fileTeachScript='';
+  document.getElementById('steps-section').style.display='none';
+  document.getElementById('flow-section').style.display='none';
+  document.getElementById('voice-transcript').textContent='Commenting your code...';
+  document.getElementById('output-area').innerHTML='<span class="placeholder-text">Commenting and highlighting...</span>';
+
+  const detailMap = {
+    beginner:'Comment EVERY single line, even closing braces. Explain as if the reader has never coded. Be thorough and encouraging.',
+    intermediate:'Comment function declarations, loops, conditionals, and non-obvious logic. Skip trivial punctuation lines.',
+    concise:'Comment only the most important or non-obvious lines with short one-liners.'
+  };
+  const cmtChar = {'JavaScript':'//','TypeScript':'//','React JSX':'//','Python':'#','Bash':'#','SQL':'--','HTML/CSS':'<!--','Java':'//','C / C++':'//'}[lang]||'//';
+
+  const prompt = `You are CodeTeach, an expert and encouraging coding teacher. The user submitted ${lang} code.
+
+TASK 1 — COMMENTED CODE:
+Return the EXACT same code with explanatory comments added ABOVE each relevant line using "${cmtChar}" syntax.
+${detailMap[detail]}
+Do NOT modify any code. Only add comment lines. No markdown fences. Keep blank lines.
+
+TASK 2 — STEPS:
+After the code, put exactly: ---STEPS---
+Then return a JSON array (4-7 items) where each item is:
+{"title":"short title max 5 words","desc":"One clear sentence about this stage of the code."}
+
+TASK 3 — TEACH SCRIPT:
+After the steps, put exactly: ---TEACH---
+Write a natural, flowing teaching script (like a teacher talking to a student) that explains the whole code from start to finish. Write 5-10 sentences. Do NOT use bullet points. Speak in second person ("you"). Do not say equals equals equals or read symbol sequences.
+
+Code:
+${code}`;
+
+  try {
+    setStatus('file','Claude is analysing...',true);
+    const res = await fetch(API,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:MODEL,max_tokens:5000,messages:[{role:'user',content:prompt}]})
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error?.message||`HTTP ${res.status}`);
+
+    const full = (data.content||[]).map(b=>b.text||'').join('');
+    const [codePart,...rest] = full.split('---STEPS---');
+    const afterSteps = rest.join('').split('---TEACH---');
+    const stepsRaw = afterSteps[0]||'[]';
+    const teachScript = (afterSteps[1]||'').trim();
+    fileTeachScript = cleanForSpeech(teachScript);
+
+    renderHighlightedCommented(codePart.trim(), lang);
+
+    let steps=[];
+    try{ steps = JSON.parse(stepsRaw.replace(/```json|```/g,'').trim()); } catch(e){}
+    fileSteps = steps;
+    if(steps.length){ renderSteps(steps); drawFlowSVG(steps); }
+
+    document.getElementById('voice-transcript').textContent='Press ▶ Play to hear the explanation.';
+    setStatus('file',`Done — ${codePart.trim().split('\n').length} lines, ${steps.length} steps, voice ready`);
+  } catch(e){
+    setStatus('file','Error: '+e.message);
+    document.getElementById('output-area').innerHTML=`<span class="placeholder-text" style="color:var(--red)">Error: ${esc(e.message)}</span>`;
+  } finally { document.getElementById('file-run-btn').disabled=false; }
+}
+
+/* STEPS */
+function renderSteps(steps){
+  const list = document.getElementById('steps-list'); list.innerHTML='';
+  steps.forEach((s,i)=>{
+    const el=document.createElement('div'); el.className='step-item fade-in';
+    el.style.animationDelay=(i*.05)+'s';
+    el.innerHTML=`<div class="step-num">${i+1}</div><div class="step-body"><div class="step-title">${esc(s.title)}</div><div class="step-desc">${esc(s.desc)}</div><button class="step-speak" onclick="speakSingle('${esc(s.desc.replace(/'/g,"\\'"))}',this)">▶ Hear this</button></div>`;
+    el.addEventListener('click',()=>{ document.querySelectorAll('.step-item').forEach(x=>x.classList.remove('active')); el.classList.add('active'); });
+    list.appendChild(el);
+  });
+  document.getElementById('steps-section').style.display='block';
+}
+
+/* FLOW DIAGRAM */
+function drawFlowSVG(steps){
+  const svg = document.getElementById('flow-svg');
+  const count = Math.min(steps.length,8);
+  const W=900,bW=105,bH=58,gap=count>1?Math.min(55,(W-count*bW-40)/(count-1)):0;
+  const totW=count*bW+(count-1)*gap, sX=(W-totW)/2, Y=30;
+  const cols=['#00e5a0','#5b8fff','#fb923c','#a78bfa','#f472b6','#2dd4bf','#fbbf24','#f87171'];
+  svg.setAttribute('viewBox',`0 0 ${W} ${Y+bH+40}`);
+  svg.setAttribute('width','100%'); svg.setAttribute('height',Y+bH+40);
+  svg.innerHTML='';
+
+  for(let i=0;i<count;i++){
+    const x=sX+i*(bW+gap), cx=x+bW/2, col=cols[i%cols.length];
+    if(i<count-1){
+      const ax=x+bW;
+      const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1',ax);line.setAttribute('y1',Y+bH/2);
+      line.setAttribute('x2',ax+gap-8);line.setAttribute('y2',Y+bH/2);
+      line.setAttribute('stroke','rgba(255,255,255,0.12)');line.setAttribute('stroke-width','1.5');line.setAttribute('stroke-dasharray','4 3');
+      svg.appendChild(line);
+      const arr=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      const tx=ax+gap; arr.setAttribute('points',`${tx},${Y+bH/2} ${tx-7},${Y+bH/2-4} ${tx-7},${Y+bH/2+4}`);
+      arr.setAttribute('fill','rgba(255,255,255,0.18)'); svg.appendChild(arr);
+    }
+    const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x',x);rect.setAttribute('y',Y);rect.setAttribute('width',bW);rect.setAttribute('height',bH);
+    rect.setAttribute('rx','8');rect.setAttribute('fill',col.replace('#','%23')+'1a');rect.setAttribute('stroke',col);rect.setAttribute('stroke-width','1');
+    svg.appendChild(rect);
+    const circ=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circ.setAttribute('cx',x+16);circ.setAttribute('cy',Y+15);circ.setAttribute('r','9');circ.setAttribute('fill',col);
+    svg.appendChild(circ);
+    const nt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    nt.setAttribute('x',x+16);nt.setAttribute('y',Y+19);nt.setAttribute('text-anchor','middle');
+    nt.setAttribute('fill','#05120b');nt.setAttribute('font-size','9');nt.setAttribute('font-family','DM Mono,monospace');nt.setAttribute('font-weight','600');
+    nt.textContent=i+1; svg.appendChild(nt);
+    const title=(steps[i].title||'').slice(0,13);
+    const t1=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t1.setAttribute('x',cx);t1.setAttribute('y',Y+22);t1.setAttribute('text-anchor','middle');
+    t1.setAttribute('fill',col);t1.setAttribute('font-size','10');t1.setAttribute('font-family','Syne,sans-serif');t1.setAttribute('font-weight','700');
+    t1.textContent=title; svg.appendChild(t1);
+    const desc=(steps[i].desc||'').slice(0,28);
+    const t2=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t2.setAttribute('x',cx);t2.setAttribute('y',Y+37);t2.setAttribute('text-anchor','middle');
+    t2.setAttribute('fill','rgba(255,255,255,0.4)');t2.setAttribute('font-size','8.5');t2.setAttribute('font-family','DM Sans,sans-serif');
+    t2.textContent=desc; svg.appendChild(t2);
+    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x',cx);lbl.setAttribute('y',Y+bH+16);lbl.setAttribute('text-anchor','middle');
+    lbl.setAttribute('fill','rgba(255,255,255,0.18)');lbl.setAttribute('font-size','8.5');lbl.setAttribute('font-family','DM Mono,monospace');
+    lbl.textContent='step '+(i+1); svg.appendChild(lbl);
+  }
+  document.getElementById('flow-section').style.display='block';
+}
+
+/* ═══ VOICE ENGINE ═══ */
+let vQueue=[], vIdx=0, vActive=false, vPaused=false;
+
+function buildVoiceQueue(){
+  vQueue=[];
+  if(voiceMode==='teach' && fileTeachScript){
+    fileTeachScript.split(/(?<=[.!?])\s+/).forEach(s=>{ if(s.trim()) vQueue.push(s.trim()); });
+  } else {
+    fileCommentLines.forEach(l=>{ if(l) vQueue.push(l); });
+    fileSteps.forEach((s,i)=>vQueue.push(`Step ${i+1}: ${s.title}. ${s.desc}`));
+  }
+}
+
+function startVoice(){
+  if(!('speechSynthesis' in window)){ alert('Your browser does not support speech synthesis. Use Chrome or Edge.'); return; }
+  buildVoiceQueue();
+  if(!vQueue.length){ alert('Run the analysis first.'); return; }
+  stopVoice(); vActive=true; vIdx=0;
+  document.getElementById('play-btn').style.display='none';
+  document.getElementById('pause-btn').style.display='';
+  speakVoiceItem();
+}
+function speakVoiceItem(){
+  if(!vActive||vIdx>=vQueue.length){ stopVoice(); return; }
+  const text = vQueue[vIdx];
+  const pIdx = parseInt(document.getElementById('voice-sel').value)||0;
+  const personality = PERSONALITIES[pIdx];
+  document.getElementById('speak-label').textContent = `${personality.name} — phrase ${vIdx+1}/${vQueue.length}`;
+  document.getElementById('speak-indicator').classList.add('show');
+  document.getElementById('voice-transcript').textContent = text;
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=parseFloat(document.getElementById('voice-speed').value);
+  u.pitch=pIdx===3?1.2:pIdx===4?0.9:1.0;
+  const v=getBestVoice(); if(v) u.voice=v;
+  u.onend=()=>{ vIdx++; speakVoiceItem(); };
+  u.onerror=()=>{ vIdx++; speakVoiceItem(); };
+  window.speechSynthesis.speak(u);
+}
+function togglePause(){
+  const btn=document.getElementById('pause-btn');
+  if(window.speechSynthesis.paused){ window.speechSynthesis.resume(); btn.textContent='⏸ Pause'; }
+  else{ window.speechSynthesis.pause(); btn.textContent='▶ Resume'; }
+}
+function stopVoice(){
+  window.speechSynthesis.cancel(); vActive=false;
+  document.getElementById('play-btn').style.display='';
+  document.getElementById('pause-btn').style.display='none';
+  document.getElementById('pause-btn').textContent='⏸ Pause';
+  document.getElementById('speak-indicator').classList.remove('show');
+}
+function speakSingle(text, btn){
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(cleanForSpeech(text));
+  u.rate=parseFloat(document.getElementById('voice-speed').value);
+  const v=getBestVoice(); if(v) u.voice=v;
+  document.querySelectorAll('.step-speak').forEach(b=>{ b.textContent='▶ Hear this'; b.classList.remove('speaking'); });
+  btn.textContent='🔊 Speaking...'; btn.classList.add('speaking');
+  u.onend=()=>{ btn.textContent='▶ Hear this'; btn.classList.remove('speaking'); };
+  window.speechSynthesis.speak(u);
+}
+function updateSpeed(){
+  const v=parseFloat(document.getElementById('voice-speed').value);
+  document.getElementById('speed-display').textContent=v.toFixed(2)+'×';
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE 2 — PROJECT TEACHER
+═══════════════════════════════════════════════════════ */
+let projectFiles = []; // [{name, content}]
+let projCommentLines = [], projTeachScript = '', projVoiceMode='comments';
+let pIdx2=0, pActive=false;
+
+function setAddTab(t){
+  ['paste','upload','github'].forEach(id=>{
+    document.getElementById('atab-'+id).classList.toggle('active',id===t);
+    document.getElementById('add-'+id+'-ui').style.display=id===t?'flex':'none';
+  });
+  document.getElementById('add-paste-ui').style.flexDirection='column';
+  document.getElementById('add-upload-ui').style.flexDirection='column';
+  document.getElementById('add-github-ui').style.flexDirection='column';
+}
+
+function addFileFromPaste(){
+  const name=document.getElementById('paste-filename').value.trim()||'file.js';
+  const content=document.getElementById('paste-code').value.trim();
+  if(!content){ alert('Paste some code first'); return; }
+  projectFiles.push({name,content});
+  document.getElementById('paste-filename').value='';
+  document.getElementById('paste-code').value='';
+  renderFileList();
+}
+
+function handleUpload(e){
+  const files=[...e.target.files];
+  let done=0;
+  files.forEach(f=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{ projectFiles.push({name:f.name,content:ev.target.result}); done++; if(done===files.length) renderFileList(); };
+    reader.readAsText(f);
+  });
+}
+
+async function loadGitHub(){
+  const url=document.getElementById('github-url').value.trim();
+  if(!url){ alert('Enter a GitHub repo URL'); return; }
+  setStatus('proj','Loading GitHub repo...',true);
+  try{
+    const match=url.match(/github\.com\/([^/]+)\/([^/\s]+)/);
+    if(!match) throw new Error('Invalid GitHub URL');
+    const [,owner,repo]=match;
+    const apiUrl=`https://api.github.com/repos/${owner}/${repo}/contents/`;
+    const res=await fetch(apiUrl,{headers:{'Accept':'application/vnd.github.v3+json'}});
+    const files=await res.json();
+    if(!Array.isArray(files)) throw new Error('Could not read repo. Is it public?');
+    const codeExts=['.js','.jsx','.ts','.tsx','.py','.html','.css','.json','.md','.sql','.sh','.txt'];
+    const codeFiles=files.filter(f=>f.type==='file'&&codeExts.some(e=>f.name.endsWith(e))).slice(0,10);
+    let loaded=0;
+    for(const f of codeFiles){
+      const r=await fetch(f.download_url); const txt=await r.text();
+      projectFiles.push({name:f.name,content:txt,githubUrl:f.html_url});
+      loaded++;
+    }
+    renderFileList();
+    setStatus('proj',`Loaded ${loaded} files from ${owner}/${repo}`);
+  } catch(e){ setStatus('proj','GitHub error: '+e.message); }
+}
+
+function renderFileList(){
+  const list=document.getElementById('proj-file-list'); list.innerHTML='';
+  if(!projectFiles.length){ list.innerHTML='<span style="font-size:12px;color:var(--muted);padding:8px;">No files yet</span>'; return; }
+  const extIcons={'js':'🟨','jsx':'⚛️','ts':'🔷','tsx':'⚛️','py':'🐍','html':'🌐','css':'🎨','json':'📋','md':'📝','sql':'🗄️','sh':'💻','txt':'📄'};
+  projectFiles.forEach((f,i)=>{
+    const ext=f.name.split('.').pop().toLowerCase();
+    const icon=extIcons[ext]||'📄';
+    const el=document.createElement('div'); el.className='file-item'; el.id='proj-file-'+i;
+    el.innerHTML=`<span class="file-icon">${icon}</span><span class="file-name">${esc(f.name)}</span>${f.githubUrl?`<a href="${f.githubUrl}" target="_blank" style="font-size:10px;color:var(--muted);text-decoration:none;" title="View on GitHub">↗</a>`:''}<span class="file-del" onclick="removeFile(${i},event)">✕</span>`;
+    el.addEventListener('click',()=>selectFile(i));
+    list.appendChild(el);
+  });
+  document.getElementById('proj-teach-file-btn').disabled=false;
+}
+
+function removeFile(i,e){ e.stopPropagation(); projectFiles.splice(i,1); renderFileList(); }
+
+function selectFile(i){
+  document.querySelectorAll('.file-item').forEach(el=>el.classList.remove('active'));
+  const el=document.getElementById('proj-file-'+i); if(el) el.classList.add('active');
+  document.getElementById('proj-file-title').textContent=projectFiles[i].name;
+  const lang=detectLang(projectFiles[i].name);
+  document.getElementById('proj-output-area').innerHTML=`<code style="font-size:12px;line-height:1.8;">${highlight(projectFiles[i].content,lang)}</code>`;
+  document.getElementById('proj-copy-pill').style.display='';
+  window._selectedFileIdx=i;
+}
+
+function detectLang(name){
+  const ext=name.split('.').pop().toLowerCase();
+  const map={'js':'JavaScript','jsx':'React JSX','ts':'TypeScript','tsx':'React JSX','py':'Python','html':'HTML/CSS','css':'HTML/CSS','sql':'SQL','sh':'Bash'};
+  return map[ext]||'JavaScript';
+}
+
+function copyProjOutput(){ navigator.clipboard.writeText(document.getElementById('proj-output-area').innerText); }
+
+async function teachCurrentFile(){
+  const i=window._selectedFileIdx;
+  if(i===undefined||!projectFiles[i]){ alert('Select a file first'); return; }
+  const f=projectFiles[i], lang=detectLang(f.name), detail=document.getElementById('proj-detail').value;
+  await teachFile(f.name, f.content, lang, detail);
+}
+
+async function teachFile(name, content, lang, detail){
+  const key=apiKey(); if(!key){ alert('Enter your API key'); return; }
+  setStatus('proj',`Teaching ${name}...`,true);
+  projCommentLines=[]; projTeachScript='';
+  const cmtChar={'JavaScript':'//','TypeScript':'//','React JSX':'//','Python':'#','Bash':'#','SQL':'--','HTML/CSS':'<!--','Java':'//','C / C++':'//'}[lang]||'//';
+  const detailMap={beginner:'Comment every single line.',intermediate:'Comment key logic lines.',concise:'Comment only important lines.'};
+  const prompt=`You are CodeTeach. The file is "${name}" (${lang}).
+
+TASK 1 — COMMENTED CODE:
+Return the exact code with comments above each relevant line using "${cmtChar}".
+${detailMap[detail]}
+No markdown fences.
+
+TASK 2 — STEPS: ---STEPS---
+JSON array 4-7 steps: [{"title":"...","desc":"..."}]
+
+TASK 3 — TEACH: ---TEACH---
+Natural flowing teaching script explaining this file as if talking to a beginner student. 6-10 sentences. No bullet points. No symbol reading.
+
+Code:
+${content.slice(0,4000)}`;
+
+  try{
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:MODEL,max_tokens:5000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json(); if(!res.ok) throw new Error(data.error?.message);
+    const full=(data.content||[]).map(b=>b.text||'').join('');
+    const [codePart,...rest]=full.split('---STEPS---');
+    const afterSteps=rest.join('').split('---TEACH---');
+    const stepsRaw=afterSteps[0]||'[]'; const teach=(afterSteps[1]||'').trim();
+    projTeachScript=cleanForSpeech(teach);
+
+    // render highlighted
+    const area=document.getElementById('proj-output-area'); area.innerHTML='';
+    codePart.trim().split('\n').forEach(line=>{
+      const span=document.createElement('span'); const t=line.trim();
+      const isCmt=t.startsWith('//')||t.startsWith('#')||t.startsWith('--')||t.startsWith('/*')||t.startsWith('*')||t.startsWith('<!--');
+      if(!t){span.style.cssText='display:block;height:.5em';}
+      else if(isCmt){span.style.cssText='display:block;color:var(--syn-comment);font-style:italic;';span.textContent=line;const c=cleanForSpeech(t.replace(/^[\s//#\-*<!-]+/,'').trim());if(c)projCommentLines.push(c);}
+      else{span.style.cssText='display:block;';span.innerHTML=highlight(line,lang);}
+      area.appendChild(span);
+    });
+
+    let steps=[];
+    try{steps=JSON.parse(stepsRaw.replace(/```json|```/g,'').trim());}catch(e){}
+
+    document.getElementById('proj-teach-output').textContent=teach||'Teaching script not generated.';
+    document.getElementById('proj-voice-panel').style.display='block';
+
+    if(steps.length) drawProjRelDiagram(steps, name);
+    setStatus('proj',`Done teaching ${name}`);
+  } catch(e){ setStatus('proj','Error: '+e.message); }
+}
+
+async function teachProject(){
+  const key=apiKey(); if(!key){alert('Enter API key');return;}
+  if(!projectFiles.length){alert('Add some files first');return;}
+  setStatus('proj','Teaching whole project...',true);
+  projCommentLines=[]; projTeachScript='';
+  const summary=projectFiles.map(f=>`FILE: ${f.name}\n${f.content.slice(0,800)}`).join('\n\n---\n\n');
+  const prompt=`You are CodeTeach. The user has a project with these files: ${projectFiles.map(f=>f.name).join(', ')}.
+
+Here are the file contents (truncated):
+${summary.slice(0,6000)}
+
+Write a comprehensive teaching explanation of the WHOLE project:
+1. What does this project do overall?
+2. How do the files connect to each other?
+3. Walk through the key files one by one explaining their role.
+4. Explain the data flow through the project.
+5. What would a beginner need to understand to work on this project?
+
+Write naturally, as if talking to a student. 10-15 sentences. No bullet points. No symbol reading. Then add ---TEACH--- and repeat the same content formatted for voice (shorter sentences, cleaner text only).`;
+
+  try{
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:MODEL,max_tokens:3000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json(); if(!res.ok) throw new Error(data.error?.message);
+    const full=(data.content||[]).map(b=>b.text||'').join('');
+    const [main,voicePart]=full.split('---TEACH---');
+    document.getElementById('proj-teach-output').textContent=main.trim();
+    projTeachScript=cleanForSpeech((voicePart||main).trim());
+    projCommentLines=projTeachScript.split(/(?<=[.!?])\s+/).filter(s=>s.trim());
+    document.getElementById('proj-voice-panel').style.display='block';
+    drawProjRelDiagram(projectFiles.map((f,i)=>({title:f.name,desc:''})), 'project');
+    setStatus('proj','Project teaching complete');
+  } catch(e){ setStatus('proj','Error: '+e.message); }
+}
+
+function clearProject(){ projectFiles=[]; renderFileList(); document.getElementById('proj-voice-panel').style.display='none'; document.getElementById('proj-diagram-wrap').style.display='none'; }
+
+function drawProjRelDiagram(items, title){
+  const svg=document.getElementById('proj-rel-svg');
+  const count=Math.min(items.length,6), W=500, bW=70, bH=36, gap=count>1?(W-count*bW)/(count-1):0;
+  const cols=['#00e5a0','#5b8fff','#fb923c','#a78bfa','#f472b6','#2dd4bf'];
+  svg.setAttribute('viewBox',`0 0 ${W} 100`); svg.innerHTML='';
+  for(let i=0;i<count;i++){
+    const x=i*(bW+gap), cx=x+bW/2, col=cols[i%cols.length];
+    if(i<count-1){
+      const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+      l.setAttribute('x1',x+bW);l.setAttribute('y1',28);l.setAttribute('x2',x+bW+gap);l.setAttribute('y2',28);
+      l.setAttribute('stroke','rgba(255,255,255,0.15)');l.setAttribute('stroke-width','1');l.setAttribute('stroke-dasharray','3 2');
+      svg.appendChild(l);
+    }
+    const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    r.setAttribute('x',x);r.setAttribute('y',10);r.setAttribute('width',bW);r.setAttribute('height',bH);r.setAttribute('rx','6');
+    r.setAttribute('fill',col.replace('#','%23')+'22');r.setAttribute('stroke',col);r.setAttribute('stroke-width','1');
+    svg.appendChild(r);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',cx);t.setAttribute('y',32);t.setAttribute('text-anchor','middle');
+    t.setAttribute('fill',col);t.setAttribute('font-size','8');t.setAttribute('font-family','DM Mono,monospace');
+    t.textContent=(items[i].title||items[i].name||'').slice(0,9);
+    svg.appendChild(t);
+  }
+  document.getElementById('proj-diagram-wrap').style.display='block';
+}
+
+/* project voice */
+function setProjVoiceMode(m){ projVoiceMode=m; document.getElementById('proj-mode-comments').classList.toggle('active',m==='comments'); document.getElementById('proj-mode-teach').classList.toggle('active',m==='teach'); }
+function updateProjSpeed(){ document.getElementById('proj-speed-display').textContent=parseFloat(document.getElementById('proj-speed').value).toFixed(2)+'×'; }
+
+let pvQueue=[],pvIdx=0,pvActive=false;
+function startProjVoice(){
+  pvQueue=[];
+  if(projVoiceMode==='teach'&&projTeachScript){ projTeachScript.split(/(?<=[.!?])\s+/).forEach(s=>{if(s.trim())pvQueue.push(s.trim());}); }
+  else{ (projCommentLines||[]).forEach(l=>{if(l)pvQueue.push(l);}); }
+  if(!pvQueue.length){alert('Run the teaching first.');return;}
+  stopProjVoice(); pvActive=true; pvIdx=0;
+  document.getElementById('proj-play-btn').style.display='none'; document.getElementById('proj-pause-btn').style.display='';
+  speakProjItem();
+}
+function speakProjItem(){
+  if(!pvActive||pvIdx>=pvQueue.length){stopProjVoice();return;}
+  const text=pvQueue[pvIdx]; const pI=parseInt(document.getElementById('proj-voice-sel').value)||0;
+  document.getElementById('proj-speak-label').textContent=PERSONALITIES[pI].name+` — phrase ${pvIdx+1}/${pvQueue.length}`;
+  document.getElementById('proj-speak-indicator').classList.add('show');
+  document.getElementById('proj-transcript').textContent=text;
+  const u=new SpeechSynthesisUtterance(text); u.rate=parseFloat(document.getElementById('proj-speed').value); u.pitch=pI===3?1.2:pI===4?0.9:1.0;
+  const v=getBestVoice();if(v)u.voice=v; u.onend=()=>{pvIdx++;speakProjItem();}; u.onerror=()=>{pvIdx++;speakProjItem();};
+  window.speechSynthesis.speak(u);
+}
+function toggleProjPause(){ const b=document.getElementById('proj-pause-btn'); if(window.speechSynthesis.paused){window.speechSynthesis.resume();b.textContent='⏸ Pause';}else{window.speechSynthesis.pause();b.textContent='▶ Resume';} }
+function stopProjVoice(){ window.speechSynthesis.cancel();pvActive=false; document.getElementById('proj-play-btn').style.display=''; document.getElementById('proj-pause-btn').style.display='none'; document.getElementById('proj-speak-indicator').classList.remove('show'); }
+
+/* ═══════════════════════════════════════════════════════
+   PAGE 3 — COMPARE CODE
+═══════════════════════════════════════════════════════ */
+let cmpScript='', cvQueue=[], cvIdx=0, cvActive=false;
+
+function updateCmpSpeed(){ document.getElementById('cmp-speed-display').textContent=parseFloat(document.getElementById('cmp-speed').value).toFixed(2)+'×'; }
+
+function loadCompareExample(){
+  document.getElementById('compare-a').value=`function calculateTotal(items) {
+  let total = 0;
+  for (let i = 0; i < items.length; i++) {
+    total = total + items[i].price;
+  }
+  return total;
+}`;
+  document.getElementById('compare-b').value=`function calculateTotal(items) {
+  // Use reduce for a cleaner, functional approach
+  const total = items.reduce((sum, item) => sum + item.price, 0);
+  // Round to 2 decimal places for currency
+  return Math.round(total * 100) / 100;
+}`;
+}
+
+function diffLines(a, b){
+  const aLines=a.split('\n'), bLines=b.split('\n');
+  const result=[];
+  const maxLen=Math.max(aLines.length,bLines.length);
+  for(let i=0;i<maxLen;i++){
+    const la=aLines[i]||null, lb=bLines[i]||null;
+    if(la===null) result.push({type:'added',a:'',b:lb});
+    else if(lb===null) result.push({type:'removed',a:la,b:''});
+    else if(la.trim()===lb.trim()) result.push({type:'same',a:la,b:lb});
+    else result.push({type:'changed',a:la,b:lb});
+  }
+  return result;
+}
+
+async function runCompare(){
+  const a=document.getElementById('compare-a').value.trim();
+  const b=document.getElementById('compare-b').value.trim();
+  const lang=document.getElementById('compare-lang').value;
+  const key=apiKey();
+  if(!a||!b){alert('Paste code in both panels');return;}
+  if(!key){alert('Enter your API key');return;}
+
+  setStatus('compare','Comparing...',true);
+  cmpScript=''; cvQueue=[];
+
+  // render diff
+  const diffs=diffLines(a,b);
+  const area=document.getElementById('diff-area'); area.innerHTML='';
+  diffs.forEach(d=>{
+    const row=document.createElement('div'); row.className='diff-line '+d.type;
+    const marker={added:'+',removed:'−',changed:'≠',same:' '}[d.type];
+    row.innerHTML=`<span class="diff-marker">${marker}</span><span class="diff-text">${highlight(d.b||d.a,lang)}</span>`;
+    area.appendChild(row);
+  });
+
+  // AI explanation
+  const prompt=`You are CodeTeach. Compare these two versions of ${lang} code and explain the differences to a beginner student.
+
+FILE A (original):
+${a}
+
+FILE B (new version):
+${b}
+
+1. What was changed and why does it matter?
+2. Which version is better and why?
+3. What concepts does the new version use that the old one doesn't?
+4. Are there any trade-offs to the changes?
+
+Write naturally in 8-12 sentences as if talking to a student. No bullet points. No symbol reading.`;
+
+  try{
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:MODEL,max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json(); if(!res.ok) throw new Error(data.error?.message);
+    const full=(data.content||[]).map(b=>b.text||'').join('');
+    cmpScript=cleanForSpeech(full);
+    document.getElementById('compare-explain').textContent=full;
+    document.getElementById('compare-ai-panel').style.display='flex';
+    document.getElementById('compare-voice-panel').style.display='block';
+    setStatus('compare','Comparison complete');
+  } catch(e){ setStatus('compare','Error: '+e.message); }
+}
+
+function startCmpVoice(){
+  cvQueue=cmpScript.split(/(?<=[.!?])\s+/).filter(s=>s.trim());
+  if(!cvQueue.length){alert('Run comparison first.');return;}
+  stopCmpVoice(); cvActive=true; cvIdx=0;
+  document.getElementById('cmp-play-btn').style.display='none'; document.getElementById('cmp-pause-btn').style.display='';
+  speakCmpItem();
+}
+function speakCmpItem(){
+  if(!cvActive||cvIdx>=cvQueue.length){stopCmpVoice();return;}
+  const text=cvQueue[cvIdx]; const pI=parseInt(document.getElementById('cmp-voice-sel').value)||0;
+  document.getElementById('cmp-speak-label').textContent=PERSONALITIES[pI].name+` — phrase ${cvIdx+1}/${cvQueue.length}`;
+  document.getElementById('cmp-indicator').classList.add('show');
+  document.getElementById('cmp-transcript').textContent=text;
+  const u=new SpeechSynthesisUtterance(text); u.rate=parseFloat(document.getElementById('cmp-speed').value); u.pitch=pI===3?1.2:pI===4?0.9:1.0;
+  const v=getBestVoice();if(v)u.voice=v; u.onend=()=>{cvIdx++;speakCmpItem();}; u.onerror=()=>{cvIdx++;speakCmpItem();};
+  window.speechSynthesis.speak(u);
+}
+function toggleCmpPause(){ const b=document.getElementById('cmp-pause-btn'); if(window.speechSynthesis.paused){window.speechSynthesis.resume();b.textContent='⏸ Pause';}else{window.speechSynthesis.pause();b.textContent='▶ Resume';} }
+function stopCmpVoice(){ window.speechSynthesis.cancel();cvActive=false; document.getElementById('cmp-play-btn').style.display=''; document.getElementById('cmp-pause-btn').style.display='none'; document.getElementById('cmp-indicator').classList.remove('show'); }
+
+
+function setStatus(page,msg,loading=false){
+  const map={file:['file-status','file-spinner'],proj:['proj-status','proj-spinner'],compare:['cmp-status','cmp-spinner'],analyze:['az-status','az-spinner']};
+  const [sid,spid]=map[page]||map.file;
+  const sel=document.getElementById(sid); const spl=document.getElementById(spid);
+  if(sel) sel.textContent=msg; if(spl) spl.style.display=loading?'inline-block':'none';
+}
+
+/* ═══ THEME TOGGLE ═══ */
+function toggleTheme(){
+  const isLight = document.body.classList.toggle('light');
+  const btn = document.getElementById('theme-toggle-btn');
+  btn.textContent = isLight ? '☀️' : '🌙';
+  btn.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+  localStorage.setItem('codeteach-theme', isLight ? 'light' : 'dark');
+}
+(function(){
+  if(localStorage.getItem('codeteach-theme')==='light'){
+    document.body.classList.add('light');
+    const btn=document.getElementById('theme-toggle-btn');
+    if(btn){ btn.textContent='☀️'; btn.title='Switch to dark mode'; }
+  }
+})();
+
+/* ═══════════════════════════════════════════════════════
+   PAGE 4 — CODE ANALYZER
+═══════════════════════════════════════════════════════ */
+let azFiles = [];   // [{name, content}]
+let azMode = 'file';
+
+function setAzMode(m){
+  azMode = m;
+  document.getElementById('az-mode-file').classList.toggle('active', m==='file');
+  document.getElementById('az-mode-project').classList.toggle('active', m==='project');
+  document.getElementById('az-file-ui').style.display = m==='file' ? 'flex' : 'none';
+  document.getElementById('az-file-ui').style.flexDirection = 'column';
+  document.getElementById('az-project-ui').style.display = m==='project' ? 'block' : 'none';
+  document.getElementById('az-sidebar-label').textContent = m==='file' ? 'PASTE FILE TO ANALYZE' : 'SYNC FROM PROJECT TEACHER';
+  if(m==='project') azSyncProject();
+}
+
+function azAddFile(){
+  const name = (document.getElementById('az-filename').value.trim()) || 'file.js';
+  const content = document.getElementById('az-code-input').value.trim();
+  if(!content){ alert('Paste some code first'); return; }
+  // replace if same name exists
+  const existing = azFiles.findIndex(f=>f.name===name);
+  if(existing>=0) azFiles[existing].content = content;
+  else azFiles.push({name, content});
+  document.getElementById('az-filename').value = '';
+  document.getElementById('az-code-input').value = '';
+  renderAzFileList();
+}
+
+function azSyncProject(){
+  // pull from projectFiles (page 2 global)
+  if(typeof projectFiles !== 'undefined' && projectFiles.length){
+    azFiles = projectFiles.map(f=>({name:f.name, content:f.content}));
+    renderAzFileList();
+    setStatus('analyze', `Synced ${azFiles.length} files from Project Teacher`);
+  } else {
+    setStatus('analyze', 'No files in Project Teacher yet — add some there first');
+  }
+}
+
+function azClearFiles(){
+  azFiles = [];
+  renderAzFileList();
+  document.getElementById('az-results').innerHTML = `<div style="color:var(--muted);font-size:13px;padding:24px 0;text-align:center;">Files cleared — add new files to analyze.</div>`;
+}
+
+function renderAzFileList(){
+  const list = document.getElementById('az-file-list');
+  list.innerHTML = '';
+  if(!azFiles.length){ list.innerHTML='<span style="font-size:12px;color:var(--muted);padding:6px;">No files yet</span>'; return; }
+  const extIcons={'js':'🟨','jsx':'⚛️','ts':'🔷','tsx':'⚛️','py':'🐍','html':'🌐','css':'🎨','json':'📋','md':'📝','sql':'🗄️','sh':'💻','txt':'📄'};
+  azFiles.forEach((f,i)=>{
+    const ext = f.name.split('.').pop().toLowerCase();
+    const icon = extIcons[ext]||'📄';
+    const lines = f.content.split('\n').length;
+    const el = document.createElement('div');
+    el.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius);cursor:default;margin-bottom:2px;background:var(--surface2);border:1px solid var(--border);';
+    el.innerHTML=`<span style="font-size:13px;">${icon}</span><div style="flex:1;min-width:0;"><div style="font-size:12px;font-family:var(--mono);color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(f.name)}</div><div style="font-size:10px;color:var(--muted);">${lines} lines</div></div><span style="font-size:11px;color:var(--muted);cursor:pointer;padding:2px 6px;border-radius:4px;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--muted)'" onclick="azFiles.splice(${i},1);renderAzFileList()">✕</span>`;
+    list.appendChild(el);
+  });
+}
+
+function azQuick(q){
+  document.getElementById('az-question').value = q;
+  runAnalyze();
+}
+
+async function runAnalyze(){
+  const question = document.getElementById('az-question').value.trim();
+  const key = apiKey();
+  if(!question){ alert('Ask a question first'); return; }
+  if(!key){ alert('Enter your Anthropic API key in the top bar'); return; }
+
+  // auto-sync project files if in project mode
+  if(azMode==='project') azSyncProject();
+
+  // use file-teacher code if no azFiles but file-teacher has code
+  let filesToSearch = [...azFiles];
+  if(!filesToSearch.length){
+    const ftCode = document.getElementById('code-input')?.value?.trim();
+    const ftName = document.getElementById('az-filename')?.value?.trim() || 'current-file.js';
+    if(ftCode) filesToSearch = [{name: ftName||'current-file.js', content: ftCode}];
+  }
+  if(!filesToSearch.length){
+    alert('Add at least one file to analyze first.');
+    return;
+  }
+
+  setStatus('analyze', 'Searching your code...', true);
+
+  // build the context with line numbers injected
+  const fileContexts = filesToSearch.map(f=>{
+    const numbered = f.content.split('\n').map((l,i)=>`L${i+1}: ${l}`).join('\n');
+    return `=== FILE: ${f.name} ===\n${numbered}`;
+  }).join('\n\n');
+
+  const lang = document.getElementById('az-lang').value;
+
+  const prompt = `You are CodeTeach's Code Analyzer. The user has ${filesToSearch.length} file(s) of ${lang} code and is asking a plain-English question about it.
+
+The code (with line numbers prefixed as L1:, L2:, etc.):
+${fileContexts}
+
+USER QUESTION: "${question}"
+
+Your job is to answer this question PRECISELY by:
+1. Finding the exact location(s) in the code that answer the question
+2. For EACH result, tell the user: File name, Line number(s), and the actual code snippet
+3. Explain in plain English what that code does and WHY it answers the question
+4. If there are multiple relevant locations, list all of them
+
+Format your response as JSON with this exact structure:
+{
+  "summary": "One sentence answering the question directly",
+  "results": [
+    {
+      "file": "filename.js",
+      "lines": "L42-L45",
+      "lineStart": 42,
+      "snippet": "the actual code from those lines",
+      "explanation": "Plain English explanation of what this code does and why it answers the question"
+    }
+  ],
+  "noResults": false,
+  "teachNote": "An optional extra tip about this pattern, concept, or best practice (1-2 sentences, encouraging tone)"
+}
+
+If nothing matches, set noResults to true and results to [].
+Return ONLY valid JSON. No markdown fences. No extra text.`;
+
+  try {
+    const res = await fetch(API, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:MODEL, max_tokens:3000, messages:[{role:'user',content:prompt}]})
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error?.message || `HTTP ${res.status}`);
+    const raw = (data.content||[]).map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
+    let parsed;
+    try{ parsed = JSON.parse(raw); } catch(e){ throw new Error('Could not parse AI response. Try again.'); }
+    renderAzResults(question, parsed, filesToSearch);
+    setStatus('analyze', `Found ${parsed.results?.length||0} result(s) for "${question}"`);
+  } catch(e){
+    setStatus('analyze', 'Error: '+e.message);
+    document.getElementById('az-results').innerHTML = `<div style="color:var(--red);font-size:13px;padding:12px;">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+function renderAzResults(question, data, files){
+  const area = document.getElementById('az-results');
+  area.innerHTML = '';
+
+  // question header
+  const qHeader = document.createElement('div');
+  qHeader.style.cssText = 'background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:4px;';
+  qHeader.innerHTML = `<div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:4px;">YOUR QUESTION</div><div style="font-size:15px;font-weight:500;color:var(--text);">"${esc(question)}"</div>`;
+  area.appendChild(qHeader);
+
+  // summary answer
+  const summary = document.createElement('div');
+  summary.style.cssText = 'background:var(--accent-dim);border:1px solid rgba(0,229,160,0.2);border-radius:var(--radius-lg);padding:14px 16px;display:flex;gap:10px;align-items:flex-start;';
+  summary.innerHTML = `<span style="font-size:18px;flex-shrink:0;">💡</span><div><div style="font-size:11px;color:var(--accent);font-family:var(--mono);margin-bottom:3px;">DIRECT ANSWER</div><div style="font-size:14px;color:var(--text);line-height:1.6;">${esc(data.summary||'')}</div></div>`;
+  area.appendChild(summary);
+
+  if(data.noResults || !data.results?.length){
+    const none = document.createElement('div');
+    none.style.cssText = 'color:var(--muted);font-size:13px;padding:20px;text-align:center;';
+    none.textContent = 'No exact matches found. Try rephrasing your question or check the file was loaded correctly.';
+    area.appendChild(none);
+    return;
+  }
+
+  // result cards
+  const resultsLabel = document.createElement('div');
+  resultsLabel.style.cssText = 'font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:6px;margin-bottom:2px;';
+  resultsLabel.textContent = `FOUND ${data.results.length} LOCATION${data.results.length>1?'S':''}`;
+  area.appendChild(resultsLabel);
+
+  data.results.forEach((r, i)=>{
+    const card = document.createElement('div');
+    card.className = 'fade-in';
+    card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;animation-delay:'+(i*0.07)+'s;';
+
+    // card header: file + line badge
+    const cardHead = document.createElement('div');
+    cardHead.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);';
+    cardHead.innerHTML = `
+      <span style="font-size:14px;">📄</span>
+      <span style="font-size:13px;font-family:var(--mono);color:var(--text);font-weight:500;">${esc(r.file||'unknown')}</span>
+      <span style="font-size:11px;background:var(--blue-dim);color:var(--blue);border:1px solid rgba(91,143,255,0.25);border-radius:20px;padding:2px 10px;font-family:var(--mono);">${esc(r.lines||'')}</span>
+      <span style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-left:auto;">result ${i+1} of ${data.results.length}</span>`;
+    card.appendChild(cardHead);
+
+    // code snippet
+    const snippetWrap = document.createElement('div');
+    snippetWrap.style.cssText = 'padding:12px 14px;border-bottom:1px solid var(--border);background:var(--bg);overflow-x:auto;';
+    const pre = document.createElement('pre');
+    pre.style.cssText = 'font-family:var(--mono);font-size:12.5px;line-height:1.7;margin:0;color:var(--text);white-space:pre;';
+
+    // render snippet with line numbers and highlight the matching lines
+    const snippetLines = (r.snippet||'').split('\n');
+    const startLine = r.lineStart || 1;
+    const lang = document.getElementById('az-lang').value;
+    snippetLines.forEach((line, si)=>{
+      const lineNum = startLine + si;
+      const lineDiv = document.createElement('div');
+      lineDiv.style.cssText = 'display:flex;gap:10px;padding:1px 0;border-radius:3px;background:rgba(0,229,160,0.06);';
+      const numSpan = document.createElement('span');
+      numSpan.style.cssText = 'color:var(--muted);min-width:32px;text-align:right;flex-shrink:0;font-size:11px;padding-top:1px;';
+      numSpan.textContent = lineNum;
+      const codeSpan = document.createElement('span');
+      codeSpan.style.flex = '1';
+      codeSpan.innerHTML = highlight(line, lang);
+      lineDiv.appendChild(numSpan);
+      lineDiv.appendChild(codeSpan);
+      pre.appendChild(lineDiv);
+    });
+    snippetWrap.appendChild(pre);
+    card.appendChild(snippetWrap);
+
+    // explanation
+    const explainDiv = document.createElement('div');
+    explainDiv.style.cssText = 'padding:12px 14px;font-size:13px;line-height:1.7;color:var(--muted2);';
+    explainDiv.innerHTML = `<span style="font-size:11px;color:var(--muted);font-family:var(--mono);display:block;margin-bottom:4px;">WHAT IT DOES</span>${esc(r.explanation||'')}`;
+    card.appendChild(explainDiv);
+
+    area.appendChild(card);
+  });
+
+  // teach note
+  if(data.teachNote){
+    const note = document.createElement('div');
+    note.style.cssText = 'background:var(--purple-dim);border:1px solid rgba(167,139,250,0.2);border-radius:var(--radius-lg);padding:12px 16px;display:flex;gap:10px;';
+    note.innerHTML = `<span style="font-size:16px;flex-shrink:0;">🎓</span><div style="font-size:13px;color:var(--text);line-height:1.65;">${esc(data.teachNote)}</div>`;
+    area.appendChild(note);
+  }
+}
+
+/* also allow file-teacher code to be sent to analyzer automatically */
+function analyzeCurrentFile(){
+  const code = document.getElementById('code-input')?.value?.trim();
+  if(!code) return;
+  const name = 'current-file.js';
+  const existing = azFiles.findIndex(f=>f.name===name);
+  if(existing>=0) azFiles[existing].content = code;
+  else azFiles.push({name, content:code});
+  renderAzFileList();
+}
+
+/* init */
+populateVoiceSelects();
+</script>
+</body>
+</html>
